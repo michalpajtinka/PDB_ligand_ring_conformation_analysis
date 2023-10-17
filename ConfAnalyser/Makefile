@@ -4,7 +4,7 @@ SOURCES=main.cpp application.cpp point_3D.cpp vector_3D.cpp plane_3D.cpp atom.cp
 		benzene.cpp cyclohexane.cpp cyclopentane.cpp pyrane.cpp helper_functions.cpp
 
 CXX=g++
-CXXFLAGS=-Wall -Wextra -ansi -pedantic -O3 -std=c++14
+CXXFLAGS=-Wall -Wextra -ansi -pedantic -O3 -std=c++20
 OBJS=$(SOURCES:.cpp=.o)
 RM=rm -f
 
