@@ -151,39 +151,48 @@ def fill_conformation_list(template_location):
     return conformation_list
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Determine conformation of carbon rings.")
+class Comparer:
+    def __init__(self):
+        pass
+
+    def load_input_molecules(input_dir):
+        pass
+
+    def load_reference_molecules(templates_dir):
+        pass
+
+
+
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Determine conformation of molecular rings")
     parser.add_argument('-t', '--template', required=True, type=str,
                         help='path to direcotory containing tempaltes')
     parser.add_argument('-i', '--input', required=True, type=str,
                         help='path to direcotory containing molecules to be tested')
+    parser.add_argument('-o', '--output', const="output.txt", type=str,
+                        help='output file')
     parser.add_argument('-e', '--executable', required=True, type=str,
                         help='path to SiteBinder executable')
-    parser.add_argument('-m', '--use_mono', action='store_true',
-                        help='use mono - use this flag under Linux')
     parser.add_argument('-s', '--tolerance', type=float, default=None,
-                        help='highest accaptable RMSD value')
-    parser.add_argument('-A', '--all', action='store_true',
-                        help='display all variants of output')
+                        help='highest tolerated RMSD value')
     parser.add_argument('-L', '--list', action='store_true',
                         help='display list of molecules')
     parser.add_argument('-S', '--summary', action='store_true',
                         help='display overall statistics')
     parser.add_argument('-R', '--RMSD_chart', action='store_true',
                         help='display RMSD chart in CSV format')
+    parser.add_argument('-A', '--all', action='store_true',
+                        help='display all variants of output')
     args = parser.parse_args()
     template_location = args.template
     molecule_location = args.input
     sitebinder_location = args.executable
-    use_mono = args.use_mono
     tolerance = args.tolerance
-    display_RMSD_chart = args.RMSD_chart
-    display_list = args.list
-    display_summary = args.summary
-    if args.all:
-        display_RMSD_chart = True
-        display_list = True
-        display_summary = True
+    display_RMSD_chart = args.RMSD_chart or args.all
+    display_list = args.list or arg.all
+    display_summary = args.summary or args.all
 
     conformation_list = fill_conformation_list(template_location)
     molecules = process_files(sitebinder_location, molecule_location,
@@ -197,6 +206,3 @@ def main():
     if display_summary:
         generate_summary(conformation_list)
         sys.stdout.write('\n')
-
-if __name__ == "__main__":
-    main()

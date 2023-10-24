@@ -16,7 +16,7 @@ class Ring: public Molecule
                 /* Is the plane there? */
                 bool has_plane;
 
-                /* First carbon of the plane */
+                /* First atom of the plane */
                 int begin;
 };
 

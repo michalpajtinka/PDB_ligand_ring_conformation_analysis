@@ -3,7 +3,7 @@
 #include "cyclohexane.h"
 #include "cyclopentane.h"
 #include "benzene.h"
-#include "pyrane.h"
+#include "oxane.h"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -14,7 +14,7 @@
 #define CYCLOHEXANE   0
 #define CYCLOPENTANE  1
 #define BENZENE       2
-#define PYRANE        3
+#define OXANE        3
 
 using namespace std;
 
@@ -89,7 +89,7 @@ bool Application::read_atom_names()
                 case BENZENE:
                         atoms_count = 6;
                         break;
-                case PYRANE:
+                case OXANE:
                         atoms_count = 6;
                         break;
                 default:
@@ -209,7 +209,7 @@ void Application::help() const
              << "         --cyclohexane" << endl
              << "         --cyclopentane" << endl
              << "         --benzene" << endl
-             << "         --pyrane" << endl;
+             << "         --oxane" << endl;
         cout << "Optional:" << endl;
         cout << "   -h --help" << endl
              << "      display this help" << endl;
@@ -238,7 +238,7 @@ void Application::parse_options()
                 {"cyclohexane",  no_argument,       &analysis_type, 0  },
                 {"cyclopentane", no_argument,       &analysis_type, 1  },
                 {"benzene",      no_argument,       &analysis_type, 2  },
-                {"pyrane",       no_argument,       &analysis_type, 3  },
+                {"oxane",        no_argument,       &analysis_type, 3  },
                 {"list",         no_argument,       nullptr,        'l'},
                 {"summary",      no_argument,       nullptr,        's'},
                 {"all",          no_argument,       nullptr,        'a'},
@@ -393,8 +393,8 @@ int Application::run()
                         case BENZENE:
                                 tmp = new Benzene(line);
                                 break;
-                        case PYRANE:
-                                tmp = new Pyrane(line);
+                        case OXANE:
+                                tmp = new Oxane(line);
                                 break;
                         default:
                                 cerr << "Unknown type of analysis!" << endl;
