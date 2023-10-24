@@ -41,6 +41,9 @@ class Atom : public Point_3D
 
 		/* get residue number */
 		int get_residue_number() const;
+
+		/* get element name */
+                std::string get_element_name() const;
         private:
                 /* atom attributes */
                 size_t line_number; /* keep line number in case of error */
