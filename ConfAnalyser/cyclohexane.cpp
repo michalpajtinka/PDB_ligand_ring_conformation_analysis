@@ -17,9 +17,10 @@ using namespace std;
 Cyclohexane::Cyclohexane(string _structure) : Six_atom_ring(_structure)
 {
         conformations.insert({"CHAIR", 3});
-        conformations.insert({"TWISTED BOAT", 4});
-        conformations.insert({"HALF CHAIR", 5});
-        conformations.insert({"BOAT", 6});
+        conformations.insert({"TW_BOAT_RIGHT", 4});
+        conformations.insert({"TW_BOAT_LEFT", 5});
+        conformations.insert({"HALF_CHAIR", 6});
+        conformations.insert({"BOAT", 7});
 }
 
 
@@ -161,7 +162,7 @@ bool Cyclohexane::is_boat() const
 }
 
 
-bool Cyclohexane::is_tw_boat() const
+bool Cyclohexane::is_tw_boat_right() const
 {
         /* twisted boat has no plane within the circle */
         if (has_plane) {
@@ -177,11 +178,41 @@ bool Cyclohexane::is_tw_boat() const
         double left_dist = left_plane.distance_from(*(C[(begin+5)%6]));
         double tw_angle = dihedral_angle(*(C[(begin+1)%6]), *(C[(begin+3)%6]),
 					 *(C[(begin+4)%6]), *(C[begin]));
+
         return ((abs(tw_angle) > angle_tw_boat - angle_tolerance) &&
                 (abs(tw_angle) < angle_tw_boat + angle_tolerance)) &&
                ((abs(right_dist) > tolerance_tw_out) &&
                 (abs(left_dist) > tolerance_tw_out)) &&
-                (right_dist * left_dist > 0);
+                (right_dist * left_dist > 0) &&
+                (right_dist > left_dist);
+}
+
+
+bool Cyclohexane::is_tw_boat_left() const
+{
+        /* twisted boat has no plane within the circle */
+        if (has_plane) {
+                return false;
+        }
+        Plane_3D right_plane(*(C[begin]),
+                             *(C[(begin+1)%6]),
+                             *(C[(begin+3)%6]));
+        Plane_3D left_plane(*(C[begin]),
+                            *(C[(begin+1)%6]),
+                            *(C[(begin+4)%6]));
+        double right_dist = right_plane.distance_from(*(C[(begin+2)%6]));
+        double left_dist = left_plane.distance_from(*(C[(begin+5)%6]));
+        double tw_angle = dihedral_angle(*(C[(begin+1)%6]), *(C[(begin+3)%6]),
+					 *(C[(begin+4)%6]), *(C[begin]));
+
+        // cout << "IS LEFT: " << (right_dist > left_dist) << "\n";
+
+        return ((abs(tw_angle) > angle_tw_boat - angle_tolerance) &&
+                (abs(tw_angle) < angle_tw_boat + angle_tolerance)) &&
+               ((abs(right_dist) > tolerance_tw_out) &&
+                (abs(left_dist) > tolerance_tw_out)) &&
+                (right_dist * left_dist > 0) &&
+                (right_dist < left_dist);
 }
 
 
@@ -201,11 +232,13 @@ bool Cyclohexane::analyse()
         if (is_flat()) {
                 conformation = conformations["FLAT"];
         } else if (is_half_chair()) {
-                conformation = conformations["HALF CHAIR"];
+                conformation = conformations["HALF_CHAIR"];
         } else if (is_boat()) {
                 conformation = conformations["BOAT"];
-        } else if (is_tw_boat()) {
-		conformation = conformations["TWISTED BOAT"];
+        } else if (is_tw_boat_right()) {
+		conformation = conformations["TW_BOAT_RIGHT"];
+        } else if (is_tw_boat_left()) {
+		conformation = conformations["TW_BOAT_LEFT"];
         } else if (is_chair()) {
                 conformation = conformations["CHAIR"];
         } else {
