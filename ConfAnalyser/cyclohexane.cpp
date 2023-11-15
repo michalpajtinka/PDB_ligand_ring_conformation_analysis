@@ -17,8 +17,8 @@ using namespace std;
 Cyclohexane::Cyclohexane(string _structure) : Six_atom_ring(_structure)
 {
         conformations.insert({"CHAIR", 3});
-        conformations.insert({"TW_BOAT_RIGHT", 4});
-        conformations.insert({"TW_BOAT_LEFT", 5});
+        conformations.insert({"TW_BOAT_R", 4});
+        conformations.insert({"TW_BOAT_L", 5});
         conformations.insert({"HALF_CHAIR", 6});
         conformations.insert({"BOAT", 7});
 }
@@ -100,7 +100,7 @@ bool Cyclohexane::initialize(const vector<Atom*> &atoms)
 
 bool Cyclohexane::is_flat() const
 {
-        /* flat conforamtion has all atoms in one plane */
+        /* flat conformation has all atoms in one plane */
         if (!has_plane) {
                 return false;
         }
@@ -108,9 +108,9 @@ bool Cyclohexane::is_flat() const
         Plane_3D left_plane(*(C[begin]), *(C[(begin+1)%6]), *(C[(begin+4)%6]));
         Plane_3D right_plane(*(C[begin]), *(C[(begin+1)%6]), *(C[(begin+3)%6]));
         return left_plane.is_on_plane(*(C[(begin+2)%6]), tolerance_flat_in) &&
-               left_plane.is_on_plane(*(C[(begin+5)%6]), tolerance_flat_in) &&
+               left_plane.is_on_plane(*(C[(begin+5)%6]), tolerance_flat_in) &&  // are atoms 2 and 5 on the left plane?
                right_plane.is_on_plane(*(C[(begin+2)%6]), tolerance_flat_in) &&
-               right_plane.is_on_plane(*(C[(begin+5)%6]), tolerance_flat_in);
+               right_plane.is_on_plane(*(C[(begin+5)%6]), tolerance_flat_in);   // are atoms 2 and 5 on the right plane?
 }
 
 
@@ -125,13 +125,18 @@ bool Cyclohexane::is_half_chair() const
         double right_dist = plane.distance_from(*(C[(begin+2)%6]));
         double left_dist = plane.distance_from(*(C[(begin+5)%6]));
         return (plane.is_on_plane(*(C[(begin+2)%6]), tolerance_flat_in) !=
-                plane.is_on_plane(*(C[(begin+5)%6]), tolerance_flat_in)) &&
-               plane.is_on_plane(*(C[(begin+4)%6]), tolerance_flat_in) &&
+                plane.is_on_plane(*(C[(begin+5)%6]), tolerance_flat_in)) &&     // is atom 2 or 5 (not both) not on the plane?
+               plane.is_on_plane(*(C[(begin+4)%6]), tolerance_flat_in) &&       // is atom 4 on a plane?
                ((abs(right_dist) > tolerance_out) !=
-                (abs(left_dist) > tolerance_out));
+                (abs(left_dist) > tolerance_out));                              // is atom 2 or 5 far enough from the plane to make the half chair?
 }
 
-
+/**
+ * @brief Checks if the ring is of chair shape
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Cyclohexane::is_chair() const
 {
         /* two atoms of chair are on the opposite sides of plane */
@@ -142,11 +147,16 @@ bool Cyclohexane::is_chair() const
         double right_dist = plane.distance_from(*(C[(begin+2)%6]));
         double left_dist = plane.distance_from(*(C[(begin+5)%6]));
         return (abs(right_dist) > tolerance_out &&
-                abs(left_dist) > tolerance_out) &&
-               (right_dist * left_dist < 0);
+                abs(left_dist) > tolerance_out) &&      // is the distance of atoms out of the plane far enough?
+               (right_dist * left_dist < 0);            // are the left and right planes distances in negative values to make the chair shape?
 }
 
-
+/**
+ * @brief Checks if the ring is of boat shape
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Cyclohexane::is_boat() const
 {
         /* two atoms of boat are on the same side of plane */
@@ -157,11 +167,16 @@ bool Cyclohexane::is_boat() const
         double right_dist = plane.distance_from(*(C[(begin+2)%6]));
         double left_dist = plane.distance_from(*(C[(begin+5)%6]));
         return (abs(right_dist) > tolerance_out &&
-                abs(left_dist) > tolerance_out) &&
-               (right_dist * left_dist > 0);
+                abs(left_dist) > tolerance_out) &&      // is the distance of atoms out of the plane far enough?
+               (right_dist * left_dist > 0);            // are the left and right planes distances in positive values to make the boat shape?
 }
 
-
+/**
+ * @brief Checks if the ring is of boat shape with right twist.
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Cyclohexane::is_tw_boat_right() const
 {
         /* twisted boat has no plane within the circle */
@@ -180,39 +195,47 @@ bool Cyclohexane::is_tw_boat_right() const
 					 *(C[(begin+4)%6]), *(C[begin]));
 
         return ((abs(tw_angle) > angle_tw_boat - angle_tolerance) &&
-                (abs(tw_angle) < angle_tw_boat + angle_tolerance)) &&
+                (abs(tw_angle) < angle_tw_boat + angle_tolerance)) &&   // is the twist angle in allowed range?
                ((abs(right_dist) > tolerance_tw_out) &&
-                (abs(left_dist) > tolerance_tw_out)) &&
-                (right_dist * left_dist > 0) &&
-                (right_dist > left_dist);
+                (abs(left_dist) > tolerance_tw_out)) &&                 // is the distance of atoms out of the plane far enough?
+                (right_dist * left_dist > 0) &&                         // are the left and right planes distances in positive values to make the boat shape?
+                (right_dist > left_dist);                               // is the right plane distance higher to make the right twist boat?
 }
 
-
+/**
+ * @brief Checks if the ring is of boat shape with left twist.
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Cyclohexane::is_tw_boat_left() const
 {
         /* twisted boat has no plane within the circle */
         if (has_plane) {
                 return false;
         }
+        // Definition of plane made of atoms 0, 1 and 3
         Plane_3D right_plane(*(C[begin]),
                              *(C[(begin+1)%6]),
                              *(C[(begin+3)%6]));
+        // Definition of plane made of atoms 0, 1 and 4
         Plane_3D left_plane(*(C[begin]),
                             *(C[(begin+1)%6]),
                             *(C[(begin+4)%6]));
+        // Distance of atom 2 from right plane
         double right_dist = right_plane.distance_from(*(C[(begin+2)%6]));
+        // Distance of atom 5 from left plane
         double left_dist = left_plane.distance_from(*(C[(begin+5)%6]));
+        // Dihedral angle between atoms 1, 3, 4, 0
         double tw_angle = dihedral_angle(*(C[(begin+1)%6]), *(C[(begin+3)%6]),
 					 *(C[(begin+4)%6]), *(C[begin]));
 
-        // cout << "IS LEFT: " << (right_dist > left_dist) << "\n";
-
         return ((abs(tw_angle) > angle_tw_boat - angle_tolerance) &&
-                (abs(tw_angle) < angle_tw_boat + angle_tolerance)) &&
+                (abs(tw_angle) < angle_tw_boat + angle_tolerance)) &&   // is the twist angle in allowed range?
                ((abs(right_dist) > tolerance_tw_out) &&
-                (abs(left_dist) > tolerance_tw_out)) &&
-                (right_dist * left_dist > 0) &&
-                (right_dist < left_dist);
+                (abs(left_dist) > tolerance_tw_out)) &&                 // is the distance of atoms out of the plane far enough?
+                (right_dist * left_dist > 0) &&                         // are the left and right planes distances in positive values to make the boat shape?
+                (right_dist < left_dist);                               // is the left plane distance higher to make the left twist boat?
 }
 
 
