@@ -259,9 +259,9 @@ bool Cyclohexane::analyse()
         } else if (is_boat()) {
                 conformation = conformations["BOAT"];
         } else if (is_tw_boat_right()) {
-		conformation = conformations["TW_BOAT_RIGHT"];
+		conformation = conformations["TW_BOAT_R"];
         } else if (is_tw_boat_left()) {
-		conformation = conformations["TW_BOAT_LEFT"];
+		conformation = conformations["TW_BOAT_L"];
         } else if (is_chair()) {
                 conformation = conformations["CHAIR"];
         } else {

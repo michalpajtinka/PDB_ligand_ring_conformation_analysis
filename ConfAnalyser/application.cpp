@@ -169,15 +169,18 @@ bool Application::process_file(Molecule* mol, string file_name)
         
         if (!read_PDB(file_name, molecule))
         {
+                cerr << "Problem while reading PDB " << file_name << "...\n";
                 goto ERROR;
         }
 
         if (!mol->initialize(molecule))
         {
+                cerr << "Problem while initializing molecule " << file_name << "...\n";
                 goto ERROR;
         }
 
         if (!mol->analyse()) {
+                cerr << "Problem while analysing " << file_name << "...\n";
                 goto ERROR;
         }
 
