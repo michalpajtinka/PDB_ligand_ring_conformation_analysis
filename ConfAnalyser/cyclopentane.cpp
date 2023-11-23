@@ -133,7 +133,7 @@ bool Cyclopentane::is_twist() const
         double right_dist = right_plane.distance_from(*(C[(begin+4)%5]));
         double tw_angle = dihedral_angle(*(C[begin]), *(C[(begin+1)%5]),
 					 *(C[(begin+2)%5]), *(C[(begin+3)%5]));
-        return (abs(tw_angle) - angle_tw_boat < angle_tolerance) &&
+        return (abs(abs(tw_angle) - angle_tw_boat) < angle_tolerance) &&
                (abs(right_dist) > tolerance_tw_out) &&
                (abs(left_dist) > tolerance_tw_out) &&
                (right_dist * left_dist > 0);
