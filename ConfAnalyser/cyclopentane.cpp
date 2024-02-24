@@ -16,7 +16,7 @@ using namespace std;
 Cyclopentane::Cyclopentane(string _structure) : Five_atom_ring(_structure)
 {
         conformations.insert({"ENVELOPE", 3});
-        conformations.insert({"TWIST", 4});
+        conformations.insert({"HALF_CHAIR", 4});
 }
 
 
@@ -116,7 +116,7 @@ bool Cyclopentane::is_envelope() const
 }
 
 
-bool Cyclopentane::is_twist() const
+bool Cyclopentane::is_half_chair() const
 {
         /* twist conformation has no plane within the circle */
         if (has_plane) {
@@ -157,8 +157,8 @@ bool Cyclopentane::analyse()
                 conformation = conformations["FLAT"];
         } else if (is_envelope()) {
                 conformation = conformations["ENVELOPE"];
-        } else if (is_twist()) {
-		conformation = conformations["TWIST"];
+        } else if (is_half_chair()) {
+		conformation = conformations["HALF_CHAIR"];
         } else {
 		conformation = conformations["UNDEFINIED"];
         }

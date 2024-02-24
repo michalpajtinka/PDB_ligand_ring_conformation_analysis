@@ -3,7 +3,6 @@
 #include "cyclohexane.h"
 #include "cyclopentane.h"
 #include "benzene.h"
-#include "oxane.h"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -14,7 +13,6 @@
 #define CYCLOHEXANE   0
 #define CYCLOPENTANE  1
 #define BENZENE       2
-#define OXANE        3
 
 using namespace std;
 
@@ -89,9 +87,6 @@ bool Application::read_atom_names()
                 case BENZENE:
                         atoms_count = 6;
                         break;
-                case OXANE:
-                        atoms_count = 6;
-                        break;
                 default:
                         cerr << "Can`t deduce number of atoms from given analysis type!" << endl;
                         return false;
@@ -111,7 +106,7 @@ bool Application::read_atom_names()
 	        ss.clear();
 	        ss.str(line);
 
-                /* Get lignad name */
+                /* Get ligand name */
                 string ligand_name;
                 ss >> ligand_name;
 
@@ -169,15 +164,18 @@ bool Application::process_file(Molecule* mol, string file_name)
         
         if (!read_PDB(file_name, molecule))
         {
+                cerr << "Problem while reading PDB " << file_name << "...\n";
                 goto ERROR;
         }
 
         if (!mol->initialize(molecule))
         {
+                cerr << "Problem while initializing molecule " << file_name << "...\n";
                 goto ERROR;
         }
 
         if (!mol->analyse()) {
+                cerr << "Problem while analysing " << file_name << "...\n";
                 goto ERROR;
         }
 
@@ -208,8 +206,7 @@ void Application::help() const
              << "      currently supported:" << endl
              << "         --cyclohexane" << endl
              << "         --cyclopentane" << endl
-             << "         --benzene" << endl
-             << "         --oxane" << endl;
+             << "         --benzene" << endl;
         cout << "Optional:" << endl;
         cout << "   -h --help" << endl
              << "      display this help" << endl;
@@ -238,7 +235,6 @@ void Application::parse_options()
                 {"cyclohexane",  no_argument,       &analysis_type, 0  },
                 {"cyclopentane", no_argument,       &analysis_type, 1  },
                 {"benzene",      no_argument,       &analysis_type, 2  },
-                {"oxane",        no_argument,       &analysis_type, 3  },
                 {"list",         no_argument,       nullptr,        'l'},
                 {"summary",      no_argument,       nullptr,        's'},
                 {"all",          no_argument,       nullptr,        'a'},
@@ -360,18 +356,6 @@ int Application::run()
                 return EXIT_FAILURE;
         }
 
-        /* Test print of read atom names */
-        /*for (const auto &x : atom_names) {
-                cout << "[" << x.first << "]" << endl;
-                for (const auto &y : x.second) {
-                        cout << "   ";
-                        for (const auto &z : y) {
-                                cout << "\"" << z << "\" ";
-                        }
-                        cout << endl;
-                }
-        }*/
-
         /* Open list of molecules */
         string line;
         ifstream f(input_file_list);
@@ -392,9 +376,6 @@ int Application::run()
                                 break;
                         case BENZENE:
                                 tmp = new Benzene(line);
-                                break;
-                        case OXANE:
-                                tmp = new Oxane(line);
                                 break;
                         default:
                                 cerr << "Unknown type of analysis!" << endl;
