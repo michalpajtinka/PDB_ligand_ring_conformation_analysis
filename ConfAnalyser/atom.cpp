@@ -257,3 +257,8 @@ int Atom::get_residue_number() const
 {
 	return residue_number;
 }
+
+string Atom::get_element_name() const
+{
+        return element_name;
+}
