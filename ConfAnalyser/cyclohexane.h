@@ -19,7 +19,8 @@ class Cyclohexane: public Six_atom_ring
                 bool is_half_chair() const;
                 bool is_chair() const;
                 bool is_boat() const; 
-                bool is_tw_boat() const;
+                bool is_tw_boat_right() const;
+                bool is_tw_boat_left() const;
 		/* function verifying atom names for current ligand type */
 		bool is_valid_atom_name(const int atom_number,
 		                        const std::string &name) const;
