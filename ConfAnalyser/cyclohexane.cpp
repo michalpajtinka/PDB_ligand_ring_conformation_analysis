@@ -19,8 +19,6 @@ Cyclohexane::Cyclohexane(string _structure) : Six_atom_ring(_structure)
         conformations.insert({"CHAIR", 3});
         conformations.insert({"TW_BOAT_R", 4});
         conformations.insert({"TW_BOAT_L", 5});
-        conformations.insert({"TW_BOAT_R", 4});
-        conformations.insert({"TW_BOAT_L", 5});
         conformations.insert({"HALF_CHAIR", 6});
         conformations.insert({"BOAT", 7});
 }
