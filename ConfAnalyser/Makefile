@@ -1,7 +1,7 @@
 PROGRAM=ConfAnalyser
 SOURCES=main.cpp application.cpp point_3D.cpp vector_3D.cpp plane_3D.cpp atom.cpp \
 		angle.cpp molecule.cpp ring.cpp six_atom_ring.cpp five_atom_ring.cpp \
-		benzene.cpp cyclohexane.cpp cyclopentane.cpp oxane.cpp helper_functions.cpp
+		benzene.cpp cyclohexane.cpp cyclopentane.cpp helper_functions.cpp
 
 CXX=g++
 CXXFLAGS=-Wall -Wextra -ansi -pedantic -O3 -std=c++20
