@@ -17,7 +17,7 @@ class Cyclopentane: public Five_atom_ring
                 /* functions for analyzing */
                 bool is_flat() const;
                 bool is_envelope() const;
-                bool is_twist() const;
+                bool is_half_chair() const;
 		/* function verifying atom names for current ligand type */
 		bool is_valid_atom_name(const int atom_number,
 		                        const std::string &name) const;
